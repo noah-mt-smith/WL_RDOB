@@ -357,6 +357,12 @@ emmean_aff_contrast <- emmeans(aff_glmm, pairwise ~ affect.type:treatment:timepo
 emmean_aff_contrast
 ```
 
+```{r}
+# summary to check main effects of experiment and age
+
+summary(aff_glmm)
+```
+
 
 Effect size (Cohen's d) calculations for effect of wins on pos and neg affect
 and effect of losses on pos and neg affect:
@@ -378,7 +384,7 @@ winner_pos_aff_postgame <- (WL_mood_long_df
 
 cohens_d(winner_pos_aff_postgame, winner_pos_aff_baseline)
 
-# d = 0.48 (medium increase in pos affect after win)
+# d = 0.47 (medium increase in pos affect after win)
 
 # Winner negative affect:
 
@@ -432,7 +438,7 @@ loser_neg_aff_postgame <- (WL_mood_long_df
 
 cohens_d(loser_neg_aff_postgame, loser_neg_aff_baseline)
 
-# d = 0.47, medium increase in neg affect after a loss.
+# d = 0.48, medium increase in neg affect after a loss.
 ```
 Making dataframe for inferential fig on percent change in positive and negative 
 affect from baseline based on mood GLMM
