@@ -114,8 +114,8 @@ WL_mood_df <- (WL_mood_df
                %>% select(-"neg.change")
 )
 
-WL_mood_df <- (WL_mood_df %>%
-                 rename(positive_affect_baseline = pos.baseline,
+WL_mood_df <- (WL_mood_df 
+               %>% rename(positive_affect_baseline = pos.baseline,
                         negative_affect_baseline = neg.baseline, 
                         positive_affect_postgame = pos.post,
                         negative_affect_postgame = neg.post
@@ -149,7 +149,7 @@ WL_mood_df <- (WL_mood_df
                                                  "loser" = "loss"))
 )
 
-
+# Making long mood dataframe
 
 WL_mood_long_df <- (WL_mood_df %>% 
                       pivot_longer(
@@ -158,12 +158,46 @@ WL_mood_long_df <- (WL_mood_df %>%
                         names_pattern = "(.*)_affect_(.*)")
 )
 
-WL_mood_long_df <- (WL_mood_long_df %>% 
-                      rename(affect.score = value,
-                             affect.type = emotion) %>%
-                      mutate(across(where(is.character), as.factor)) 
+WL_mood_long_df <- (WL_mood_long_df  
+                    %>% rename(affect.score = value,
+                             affect.type = emotion) 
+                    %>% mutate(across(where(is.character), as.factor)) 
 )
+
+WL_mood_long_df$treatment <- factor(WL_mood_long_df$treatment, 
+                                    levels = rev(levels(WL_mood_long_df$treatment)))
+
+WL_mood_long_df$affect.type <- factor(WL_mood_long_df$affect.type, 
+                                      levels = rev(levels(WL_mood_long_df$affect.type)))
 
 summary(WL_mood_long_df)
 
 write_rds(WL_mood_long_df, "WL_mood_long_df.rds")
+
+# Making percent change mood dataframe
+
+WL_mood_percent_df <- (WL_mood_df
+                       %>% mutate(positive_percent_change = ((positive_affect_postgame - positive_affect_baseline)/positive_affect_baseline)*100) 
+                       %>% mutate(negative_percent_change = ((negative_affect_postgame - negative_affect_baseline)/negative_affect_baseline)*100)
+)
+
+WL_mood_percent_df <- (WL_mood_percent_df
+                       %>% select(-positive_affect_baseline, 
+                                  -positive_affect_postgame, 
+                                  -negative_affect_baseline, 
+                                  -negative_affect_postgame)
+                       %>% pivot_longer(cols = ends_with("change"),
+                                        values_to = ("affect.change"),
+                                        names_to = ("affect.type"))
+                       %>% mutate(across(where(is.character), as.factor))
+                       %>% mutate(affect.type = fct_recode(affect.type,
+                                                           "negative" = "negative_percent_change",
+                                                           "positive" = "positive_percent_change"))
+                       %>% mutate(affect.type = fct_rev(affect.type))
+                       %>% mutate(treatment = fct_rev(treatment))
+                       %>% rename(affect.percent.change = affect.change) 
+)
+
+summary(WL_mood_percent_df)
+
+write_rds(WL_mood_percent_df, "WL_mood_percent_df.rds")

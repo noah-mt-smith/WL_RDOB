@@ -23,21 +23,21 @@ library(ordinal)
 \large Switching Analysis
 \end{center}
 
-
 ```{r}
 WL_switching_df <- readRDS("WL_switching_df.rds")
 summary(WL_switching_df)
 ```
+\subsubsection{Information about switching dataframe}
 
-about dataframe: 
   "switch.pref" levels correspond to: 
-  1: I strongly prefer to continue playing the shooting videogame.
+1: I strongly prefer to continue playing the shooting videogame.
 2: I moderately prefer to continue playing the shooting videogame.
 3: I have no preference for which videogame I play.
 4: I moderately prefer to switch to playing the racing videogame.
 5: I strongly prefer to switch to playing the racing videogame.
 
-Descriptive histogram of switching preferences for winners and losers. 
+\subsubsection{Descriptive histogram of switching preferences for winners and losers}
+
 
 ```{r}
 WL_switching_df$treatment <- factor(WL_switching_df$treatment, 
@@ -47,12 +47,12 @@ switch_labels <- c("1" = "stay (strong)", "2" = "stay (moderate)",
                    "3" = "indifferent", "4" = "switch (moderate)", 
                    "5" = "switch (strong)")
 
-strip_labs <- c("winner" = "Winner", "loser" = "Loser")
+strip_labels <- c("winner" = "Winner", "loser" = "Loser")
 
 switch_barplot <- ggplot(WL_switching_df, aes(x = switch.pref,
                                               fill = switch.pref)) + 
   geom_bar() + facet_wrap(~treatment, nrow=1, 
-                          labeller = as_labeller(strip_labs)) + 
+                          labeller = as_labeller(strip_labels)) + 
   scale_x_discrete(labels = switch_labels) +
   labs(x = "Preference for shooter game (stay) or racing game (switch)",
        y = "Count") + 
@@ -76,9 +76,9 @@ WL_switching_df$treatment <- factor(WL_switching_df$treatment,
                                     levels = rev(levels(WL_switching_df$treatment)))
 ```
 
+\subsubsection{Cumulative link model of participant switching preference}
 
-Cumulative link model using the package "ordinal". No participant 
-ID as random effect because each participant provided only one response for 
+No participant ID as random effect because each participant provided only one response for 
 switch.pref.
 
 ```{r}
@@ -92,6 +92,7 @@ null_switch_clm <- clm(switch.pref ~ 1, link = "logit",
 
 anova(switch_clm, null_switch_clm)
 ```
+\subsubsection{Estimated marginal means plot of overall effect of treatment}
 
 Emmeans plot and table of overall coefficient values, suggesting 
 a statistically clear effect for greater switching preference in losers.
@@ -104,37 +105,7 @@ plot(emm_switch) + theme_linedraw()  +
   geom_text(label = switch_Ns, nudge_y = 0.2)
 emm_switch
 ```
-
-
-We can also calculate an effect size measure (Cliff's delta) for the effect of 
-winning vs losing on switching preference
-```{r}
-# Cliff's delta for switching
-
-winner_switch_pref <- (WL_switching_df
-                         %>% filter(treatment == "winner")
-                         %>% pull(switch.pref))
-
-loser_switch_pref <- (WL_switching_df
-                         %>% filter(treatment == "loser")
-                         %>% pull(switch.pref))
-
-cliffs_delta(loser_switch_pref, winner_switch_pref)
-
-# cliff's delta for switching = 0.31 (losers have "medium" sized greater preference to switch)
-```
-
-Summary table for coefficient interpretation & p-values
-
-```{r}
-summary(switch_clm)
-```
-
-Effect of treatment seems to have an influence on people's desire to switch, 
-where people have a stronger preference to switch to the other game after they've lost. 
-Need to ask Ben more about how to interpret this. However, from what I understand, 
-it's saying that, compared to the intercept ("win"), people in the losing treatment 
-report a higher desire to switch (i.e. options "4" and "5").
+\subsubsection{Emmeans plot for model estimates of picking each level of switching}
 
 ```{r}
 emm_switch_clm_allchoices <- emmeans(switch_clm, ~switch.pref|treatment, 
@@ -152,6 +123,32 @@ have a higher probability of wanting to switch when they're in the losing treatm
 
 Bars are 95% confidence intervals.
 
+\subsubsection{Summary table for main effects of treatment and age}
+
+```{r}
+summary(switch_clm)
+```
+
+Effect of treatment seems to have an influence on people's desire to switch, as 
+shown in emmeans plot. Age has no effect.
+
+\subsubsection{Ordinal effect size (cliff's delta) for switching preference}
+
+We can also calculate an effect size measure (Cliff's delta) for the effect of 
+winning vs losing on switching preference
+```{r}
+winner_switch_pref <- (WL_switching_df
+                         %>% filter(treatment == "winner")
+                         %>% pull(switch.pref))
+
+loser_switch_pref <- (WL_switching_df
+                         %>% filter(treatment == "loser")
+                         %>% pull(switch.pref))
+
+cliffs_delta(loser_switch_pref, winner_switch_pref)
+```
+Cliff's delta for switching = 0.31 (losers have "medium" sized greater preference to switch)
+
 \newpage
 \begin{center}
 \large Waiting Analysis
@@ -163,20 +160,20 @@ WL_waiting_df <- readRDS("WL_waiting_df.rds")
 summary(WL_waiting_df)
 ```
 
-Information about the dataframe:
-  "wait.pref" levels correspond to:
-  1: I would like to start now.
+\subsubsection{Information about waiting dataframe}
+
+"wait.pref" levels correspond to:
+1: I would like to start now.
 2: I would like to wait 1 minute before playing.
 3: I would like to wait 3 minutes before playing.
 4: I would like to wait 5 minutes before playing.
 5: I would like to wait 10 minutes before playing. 
 
 "exp.level" corresponds to:
-  1: I have never played shooter videogames on a mouse and keyboard before.
-2: Between <1 and 5 hours of first person shooter videogame play on mouse and keyboard per week in the past 6 months
-3: Greater than 5 hours of first person shooter videogame play on mouse and keyboard per week in the past 6 months
+1: Participant has never played shooter videogames on a mouse and keyboard before.
+2: Participant has played shooter videogames on a mouse and keyboard before.
 
-Descriptive histogram of waiting preferences:
+\subsubsection{Descriptive histogram of waiting preferences:}
   
 ```{r}
 WL_waiting_df$treatment <- factor(WL_waiting_df$treatment, 
@@ -186,7 +183,7 @@ wait_labels <- c("1" = "0", "2" = "1", "3" = "3", "4" = "5", "5" = "10")
 
 wait_barplot <- ggplot(WL_waiting_df, aes(x = wait.pref, fill = wait.pref)) + 
   geom_bar() + facet_wrap(~treatment, nrow=1, 
-                          labeller = as_labeller(strip_labs)) +
+                          labeller = as_labeller(strip_labels)) +
   scale_x_discrete(labels = wait_labels) +
   labs(x = "Waiting behaviour (minutes)",
        y = "Count") + 
@@ -210,7 +207,7 @@ WL_waiting_df$treatment <- factor(WL_waiting_df$treatment,
                                   levels = rev(levels(WL_waiting_df$treatment)))
 ```
 
-Cumulative link model of waiting preferences using package "ordinal":
+\subsubsection{Cumulative link model of waiting preferences using package "ordinal":}
   
 ```{r}
 wait_clm <- clm(wait.pref ~ 1 + treatment + exp.level + age, link = "logit",
@@ -224,9 +221,7 @@ null_wait_clm <- clm(wait.pref ~ 1, link = "logit",
 anova(wait_clm, null_wait_clm)
 ```
 
-Emmeans plot and table of waiting CLM, suggests people in winning 
-and losing treatments are waiting about equivalently.
-Small effect. If we had more data would be more statistically clear.
+\subsubsection{Emmeans plot and table of main effect of winning and losing on waiting} 
 
 ```{r}
 wait_Ns <- c("n = 69", "n = 69")
@@ -236,13 +231,34 @@ plot(emm_wait_overall) + theme_linedraw() +
   labs(x = "Waiting behaviour (cumulative log odds)", y = "") +
   geom_text(label = wait_Ns, nudge_y = 0.2)
 ```
+Suggests people in winning and losing treatments are waiting about equivalently.
+Small and non-significant effect.
+
+```{r}
+emm_wait_clm_allchoices <- emmeans(wait_clm, ~wait.pref|treatment, mode = "prob")
+plot(emm_wait_clm_allchoices) + theme_linedraw() + 
+  labs(x = "Probability of choice", 
+       y = "Waiting behaviour (higher number = longer requested waiting time)")
+```
+
+Probabilities for picking each of the wait time levels are quite similar for 
+winners and losers. Bars are 95% confidence intervals.
+
+\subsubsection{Summary table for coefficients and p-values of waiting CLM:}
+
+```{r}
+summary(wait_clm)
+```
+
+Effect of treatment does not have a statistically clear impact on 
+waiting behaviour. Neither does age.
+
+\subsubsection{Ordinal effect size (cliff's delta) for waiting behaviour}
 
 We can also calculate Cliff's delta for the effect of losing vs. winning
 on waiting behaviour.
 
 ```{r}
-# Cliff's delta for effect of winning vs. losing on waiting
-
 winner_wait_pref <- (WL_waiting_df
                          %>% filter(treatment == "winner")
                          %>% pull(wait.pref))
@@ -252,285 +268,182 @@ loser_wait_pref <- (WL_waiting_df
                          %>% pull(wait.pref))
 
 cliffs_delta(loser_wait_pref, winner_wait_pref)
-
-# cliff's delta = 0.11 [95% CI overlaps 0] (losers have negligibly greater 
-# preference to wait)
 ```
-
-Summary table for coefficients and p-values of waiting CLM.
-```{r}
-summary(wait_clm)
-```
-
-Effect of treatment does not have a statistically clear impact on 
-waiting behaviour.
-
-```{r}
-emm_wait_clm_allchoices <- emmeans(wait_clm, ~wait.pref|treatment, mode = "prob")
-plot(emm_wait_clm_allchoices) + theme_linedraw() + 
-  labs(x = "Probability of choice", 
-       y = "Waiting behaviour (higher number = longer requested waiting time)")
-```
-Probabilities for picking each of the wait time levels are quite similar for 
-winners and losers.
-
-Bars are 95% confidence intervals.
+Cliff's delta = 0.11 [95% CI overlaps 0] (losers have negligibly greater preference to wait)
 
 \newpage
 \begin{center}
 \large Mood (PANAS) analysis
 \end{center}
 
-
 ```{r}
 WL_mood_long_df <- readRDS("WL_mood_long_df.rds")
 summary(WL_mood_long_df)
 ```
+\subsubsection{Mood long dataframe information:}
 
-mood df information: 
-
-For each participant, We have 2 responses for positive affect 
+For each participant, we have 2 responses for positive affect 
 (baseline and post-game) and 2 responses for negative affect (baseline and post-game). 
-These are visible in the raw mood data, which is the wide dataframe for mood.
+The raw mood dataframe / csv is the wide dataframe for mood.
 In the long dataframe, "WL_mood_long_df", I have pivoted the values of these 
 4 columns into a single column (affect.score). I moved "baseline" and "postgame"
 to the column "timepoint", and I moved "positive affect" and "negative affect" 
 to the column "affect type". The long dataframe therefore has 4 rows per participant.
 
-Descriptive plot of positive affect and negative affect
-
+\subsubsection{Descriptive plot of raw values for positive affect and negative affect}
 ```{r}
-WL_mood_long_df$treatment <- factor(WL_mood_long_df$treatment, 
-                                    levels = rev(levels(WL_mood_long_df$treatment)))
+affect_labels <- c("positive" = "Positive affect", "negative" = "Negative affect", 
+                    "positive" = "Positive affect", "negative" = "Negative affect")
 
-WL_mood_long_df$affect.type <- factor(WL_mood_long_df$affect.type, 
-                                    levels = rev(levels(WL_mood_long_df$affect.type)))
+raw_mood_boxplot <- ggplot(WL_mood_long_df, aes(x = affect.type, y = affect.score, fill = timepoint)) + 
+                    geom_boxplot() + 
+                    scale_x_discrete(labels = affect_labels) +
+                    facet_wrap(~treatment, nrow = 1, labeller = as_labeller(strip_labels)) +
+                    theme_linedraw() + 
+                    labs(y = "Affect score",
+                         x = "", fill = "Timepoint")
 
-ggplot(WL_mood_long_df, aes(x = affect.type, y = affect.score, fill = timepoint)) + 
-  geom_boxplot() + 
-  facet_wrap(~treatment, nrow = 1, labeller = as_labeller(strip_labs)) +
-  theme_linedraw() + 
-  labs(y = "Affect score",
-       x = "Affect type")
-
-WL_mood_long_df$treatment <- factor(WL_mood_long_df$treatment, 
-                                    levels = rev(levels(WL_mood_long_df$treatment)))
-
-WL_mood_long_df$affect.type <- factor(WL_mood_long_df$affect.type, 
-                                    levels = rev(levels(WL_mood_long_df$affect.type)))
-```
-
-Generalized linear mixed model assuming gaussian distribution using the package "glmmTMB" 
-
-GLMM includes Participant ID as random effect, which takes into account the fact 
-that each participant provides a positive affect response at baseline and postgame
-and a negative affect response at baseline and postgame. Fit looks okay.
-
-```{r}
-aff_glmm <- glmmTMB(affect.score ~ treatment*timepoint*affect.type + 
-                      experiment + age + (1|participant.ID),
-                    data = WL_mood_long_df,family = "gaussian")
-
-testResiduals(aff_glmm)
-testQuantiles(aff_glmm)
-```
-
-Now look at emmeans plots to see what's going on. We specifically predicted
-increase in positive affect for winners and increase in neg affect for losers.
-
-```{r}
-emm_aff_glmm <- emmeans(aff_glmm, ~treatment:timepoint:affect.type)
-mood_Ns <- c("n = 137", "n = 136", "n = 137", "n = 136", "n = 137", "n = 136", "n = 137", "n = 136")
-plot(emm_aff_glmm) + theme_linedraw() + labs(x = "Affect score", y = "") + 
-  geom_text(label = mood_Ns, nudge_y = 0.3, size = 3.5)
-```
-Bars are 95% confidence intervals.
-
-We can get p-values for baseline vs. post-game using pairwise contrasts. Because
-of our three-way interaction term, this will generate a ton of p-values but we're only
-interested in two, since our a priori predictions about mood were: 
-1) wins would increase positive affect
-2) losses would increase negative affect.
-
-```{r}
-emmean_aff_contrast <- emmeans(aff_glmm, pairwise ~ affect.type:treatment:timepoint)
-emmean_aff_contrast
+print(raw_mood_boxplot)
 ```
 
 ```{r}
-# summary to check main effects of experiment and age
-
-summary(aff_glmm)
+WL_mood_percent_df <- readRDS("WL_mood_percent_df.rds")
+summary(WL_mood_percent_df)
 ```
+\subsubsection{Mood percent change from baseline dataframe info:} 
 
+In the percent dataframe, I took the wide mood dataframe (raw csv) and converted
+each participant's baseline and postgame negative affect and positive affect values
+(4 columns total) into 2 "percent change from baseline" columns--1 for positive affect
+and the other for negative affect. I then pivoted these columsn into long format, moving
+the names to "affect.type" and the scores to "affect.percent.change". The percent
+dataframe therefore has two rows per participants, one corresponding to the 
+percent change in positive affect from baseline and the other corresponding to the 
+percent change in negative affect from baseline. 
 
-Effect size (Cohen's d) calculations for effect of wins on pos and neg affect
-and effect of losses on pos and neg affect:
+\subsubsection{Descriptive plot of percent change from baseline for positive affect and negative affect} 
+```{r}
+mood_percent_boxplot <- ggplot(WL_mood_percent_df, 
+                        aes(x = affect.type, 
+                            y = affect.percent.change,
+                            fill = affect.type)) +
+                        facet_wrap(~treatment, nrow = 1,
+                                   labeller = as_labeller(strip_labels)) +
+                        scale_x_discrete(labels = affect_labels) +
+                        labs(y = "Percent change from baseline",
+                             x = "Affect type") +
+                        theme(legend.position = "none") +
+                        geom_boxplot()
+
+print(mood_percent_boxplot)
+```
+\subsubsection{Gaussian generalized linear mixed model (GLMM) of the mood percentage change data} 
+
+We initially fit a GLMM to the long mood data that included a three-way interaction (treatment:affect.type:timepoint), but the fit was poor. We thus refit the model to the percent change dataframe and the overall fit was much better while
+not changing our results. The GLMM includes participant ID as a random effect, which takes into account 
+that each participant has a percent change response for positive affect and for negative affect. We
+preferred the percent change model because the overall fit is much better and it changes little about 
+our results. 
 
 ```{r}
-# Winner positive affect:
+aff_percent_change_glmm <- glmmTMB(affect.percent.change ~ treatment:affect.type + 
+                                     experiment + age +
+                                     (1|participant.ID),
+                                    data = WL_mood_percent_df,
+                                    family = "gaussian")
 
-winner_pos_aff_baseline <- (WL_mood_long_df
-                            %>% filter(treatment == "winner")
-                            %>% filter(timepoint == "baseline")
-                            %>% filter(affect.type == "positive")
-                            %>% pull(affect.score))
-
-winner_pos_aff_postgame <- (WL_mood_long_df
-                            %>% filter(treatment == "winner")
-                            %>% filter(timepoint == "postgame")
-                            %>% filter(affect.type == "positive")
-                            %>% pull(affect.score))
-
-cohens_d(winner_pos_aff_postgame, winner_pos_aff_baseline)
-
-# d = 0.47 (medium increase in pos affect after win)
-
-# Winner negative affect:
-
-winner_neg_aff_baseline <- (WL_mood_long_df
-                            %>% filter(treatment == "winner")
-                            %>% filter(timepoint == "baseline")
-                            %>% filter(affect.type == "negative")
-                            %>% pull(affect.score))
-
-winner_neg_aff_postgame <- (WL_mood_long_df
-                            %>% filter(treatment == "winner")
-                            %>% filter(timepoint == "postgame")
-                            %>% filter(affect.type == "negative")
-                            %>% pull(affect.score))
-
-cohens_d(winner_neg_aff_postgame, winner_neg_aff_baseline)
-
-# d = -0.11, negligible decrease in neg affect after a win.
-
-# Loser positive affect:
-
-loser_pos_aff_baseline <- (WL_mood_long_df
-                            %>% filter(treatment == "loser")
-                            %>% filter(timepoint == "baseline")
-                            %>% filter(affect.type == "positive")
-                            %>% pull(affect.score))
-
-loser_pos_aff_postgame <- (WL_mood_long_df
-                            %>% filter(treatment == "loser")
-                            %>% filter(timepoint == "postgame")
-                            %>% filter(affect.type == "positive")
-                            %>% pull(affect.score))
-
-cohens_d(loser_pos_aff_postgame, loser_pos_aff_baseline)
-
-# d = -0.11, negligible decrease in pos affect after a loss. 
-
-# Loser negative affect:
-
-loser_neg_aff_baseline <- (WL_mood_long_df
-                           %>% filter(treatment == "loser")
-                           %>% filter(timepoint == "baseline")
-                           %>% filter(affect.type == "negative")
-                           %>% pull(affect.score))
-
-loser_neg_aff_postgame <- (WL_mood_long_df
-                           %>% filter(treatment == "loser")
-                           %>% filter(timepoint == "postgame")
-                           %>% filter(affect.type == "negative")
-                           %>% pull(affect.score))
-
-cohens_d(loser_neg_aff_postgame, loser_neg_aff_baseline)
-
-# d = 0.48, medium increase in neg affect after a loss.
+testResiduals(aff_percent_change_glmm)
+testQuantiles(aff_percent_change_glmm)
 ```
-Making dataframe for inferential fig on percent change in positive and negative 
-affect from baseline based on mood GLMM
+\subsubsection{Estimated marginal means plots of model predictions} 
+
+We can use the emmeans package to see what the model predicts. We specifically predicted
+increase in positive affect for winners and increase in neg affect for losers. Points
+are estimated marginal means based on model and bars are 95% confidence intervals.
 
 ```{r}
-emm_aff_glmm_df <- as.data.frame(emm_aff_glmm)
-emm_aff_glmm_df
+percent_change_emm <- emmeans(aff_percent_change_glmm, ~treatment:affect.type)
+percent_change_emm
 
-# All values used for the calculations below come from the above dataframes, which 
-# is from the emmeans objects generated from the mood glmm
+plot(percent_change_emm) + coord_flip() + geom_vline(xintercept = 0, lty = 3) +
+  labs(y = "Treatment and affect type", x = "Percent change from baseline")
 
-# Formula for calculating percent change in affect from baseline: 
+# just making this figure prettier
 
-# ((postgame - baseline)/baseline)*100
+percent_change_emm_df <- as.data.frame(percent_change_emm)
 
-# Formula for calculating 95% confidence interval for percent change in affect from baseline:
+strip_labels <- c("winner" = "Winner", "loser" = "Loser")
+affect_labels <- c("positive" = "Positive affect", "negative" = "Negative affect", 
+                    "positive" = "Positive affect", "negative" = "Negative affect")
 
-# ((1.96*SE)/((baseline + post)/2))*100
-
-# ------------------CHANGE IN POSITIVE AFFECT (WINNERS)--------------------
-
-# percent change in positive affect for winners: 
-
-(((32.45769-28.67092)/28.67092)*100) # 13.2077% change in pos affect for winners
-
-# Confidence interval for change in positive affect. The CI is calculated
-# using the wald method (hence the 1.96*SE) and averaging the mean estimates 
-# across baseline and postgame (i.e., the confidence intervals are an 
-# approximation of the change). 
-
-# Formula: 95% CI = ((1.96*SE)/((baseline + post)/2))*100
-
-((1.96*0.5297711)/((28.67092+32.45769)/2))*100 # ± 3.397268% CI
-
-# # ------------------CHANGE IN POSITIVE AFFECT (LOSERS)--------------------
-
-(((27.49314-28.23767)/28.23767)*100) # -2.636655% change in pos affect for losers
-# CI for change in positive affect for losers
-((1.96*0.5278298)/((28.23767+27.49314)/2))*100 # ± 3.712655 CI
-
-# ------------------CHANGE IN NEGATIVE AFFECT (WINNERS)--------------------
-
-
-# percent change in negative affect for winners: 
-(((14.20768-14.66357)/14.66357)*100) # -3.108997% change in neg affect for winners
-# CI for change in negative affect for winners
-((1.96*0.5297711)/((14.20768+14.66357)/2))*100 # ± 7.192978% CI
-
-# ------------------CHANGE IN NEGATIVE AFFECT (LOSERS)--------------------
-
-# percent change in negative affect for losers: 
-(((17.71942-15.15007)/15.15008)*100) # 16.95932% change in neg affect for losers
-# CI for change in negative affect for losers
-((1.96*0.5278298)/((15.15008+17.71942)/2))*100 # ± 6.294872% CI 
-
-# Making dataframe to construct figure, all values come from the above
-# calculations
-
-affect_change_df <- tibble(
-  affect = c("Positive affect","Positive affect","Negative affect","Negative affect"),
-  treatment = c("Winner","Loser","Winner","Loser"),
-  mean_change = c(13.2077,-2.636655,-3.108997,16.95933),
-  CI_upper = c(13.2077+3.397268,-2.636655+3.712655,-3.108997+7.192978,16.95932+6.294872),
-  CI_lower = c(13.2077-3.397268,-2.636655-3.712655,-3.108997-7.192978,16.95932-6.294872)
-)
-
-affect_change_df <- (affect_change_df
-                     %>% mutate(treatment = fct_rev(treatment))
-                     %>% mutate(affect = fct_rev(affect))
-)
-
-affect_change_fig <- ggplot(affect_change_df, aes(x = affect, y = mean_change)) +
+percent_change_fig <- ggplot(percent_change_emm_df, aes(x = affect.type, y = emmean)) +
   geom_point(size = 3.5) +
-  facet_wrap(~treatment, nrow=1) + 
-  geom_errorbar(aes(ymin = CI_lower, ymax = CI_upper),
+  facet_wrap(~treatment, nrow=1, labeller = as_labeller(strip_labels)) + 
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL),
                 width = 0,
                 linewidth = 1) +
   labs(x = "", y = "Percent change in affect from baseline") + 
-        geom_hline(yintercept = 0, lty = 3) +
-        theme(axis.title.x = element_text(size = 18, 
+  scale_x_discrete(labels = affect_labels) +
+  geom_hline(yintercept = 0, lty = 3) +
+  theme(axis.title.x = element_text(size = 18, 
                                     margin = margin(t = 10, r = 0, b = 0, l = 0)),
         axis.title.y = element_text(size = 18),
         axis.text.x = element_text(size = 12),   
         axis.text.y = element_text(size = 12),
         strip.text = element_text(size = 18))
 
-print(affect_change_fig)
+print(percent_change_fig)
+```
 
-#ggsave(filename = "/Users/noahsmith/WL_RDOB/figures/affect_change_fig.png",
-#       plot = affect_change_fig, 
-#       width = 12,
-#       height = 8, 
-#       dpi = 500)
+We can get z-values and p-values for these point estimates and confidence intervals using z-tests. Since the SEs and point estimates are from the GLMM, we can divide the point estimates by the SE to approximate a comparison to 0 (i.e. no change from baseline) based on the model.
 
+```{r}
+percent_change_emm_df_pvals <- (percent_change_emm_df 
+                                %>% mutate(z.ratio = emmean/SE,
+                                           p.value = 1.96*(1-pnorm(abs(z.ratio))))
+)
+
+percent_change_emm_df_pvals
+```
+
+\subsubsection{Main effects of experiment and age on percent change in affect}
+
+We can also run the standard summary() function to get estimates for the main effects
+of experiment and age on percent change in affect.
+```{r}
+summary(aff_percent_change_glmm)
+```
+\subsubsection{Effect size (Cohen's d) calculations for percentage change from baseline}
+
+Here we are doing one-sample cohen's d calculations that compare the percentage
+change values in our dataset (i.e. not modeled) to a null percentage change of 0.
+
+```{r}
+winner_pos_change <- (WL_mood_percent_df
+                       %>% filter(treatment == "winner")
+                       %>% filter(affect.type == "positive")
+                       %>% pull(affect.percent.change))
+
+cohens_d(winner_pos_change, mu = 0)
+
+winner_neg_change <- (WL_mood_percent_df
+                      %>% filter(treatment == "winner")
+                      %>% filter(affect.type == "negative")
+                      %>% pull(affect.percent.change))
+
+cohens_d(winner_neg_change, mu = 0)
+
+loser_pos_change <- (WL_mood_percent_df
+                     %>% filter(treatment == "loser")
+                     %>% filter(affect.type == "positive")
+                     %>% pull(affect.percent.change))
+
+cohens_d(loser_pos_change, mu = 0)
+
+loser_neg_change <- (WL_mood_percent_df
+                       %>% filter(treatment == "loser")
+                       %>% filter(affect.type == "negative")
+                       %>% pull(affect.percent.change))
+
+cohens_d(loser_neg_change, mu = 0)
 ```
