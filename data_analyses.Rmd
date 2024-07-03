@@ -319,7 +319,7 @@ summary(WL_mood_percent_df)
 In the percent dataframe, I took the wide mood dataframe (raw csv) and converted
 each participant's baseline and postgame negative affect and positive affect values
 (4 columns total) into 2 "percent change from baseline" columns--1 for positive affect
-and the other for negative affect. I then pivoted these columsn into long format, moving
+and the other for negative affect. I then pivoted these columns into long format, moving
 the names to "affect.type" and the scores to "affect.percent.change". The percent
 dataframe therefore has two rows per participants, one corresponding to the 
 percent change in positive affect from baseline and the other corresponding to the 
