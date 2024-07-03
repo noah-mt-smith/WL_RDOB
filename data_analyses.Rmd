@@ -384,7 +384,7 @@ percent_change_fig <- ggplot(percent_change_emm_df, aes(x = affect.type, y = emm
   geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL),
                 width = 0,
                 linewidth = 1) +
-  labs(x = "", y = "Percent change in affect from baseline") + 
+  labs(x = "", y = "Percent change from baseline") + 
   scale_x_discrete(labels = affect_labels) +
   geom_hline(yintercept = 0, lty = 3) +
   theme(axis.title.x = element_text(size = 18, 
@@ -396,11 +396,11 @@ percent_change_fig <- ggplot(percent_change_emm_df, aes(x = affect.type, y = emm
 
 print(percent_change_fig)
 
-# ggsave(filename = "/Users/noahsmith/WL_RDOB/figures/percent_change_fig.png",
-#       plot = percent_change_fig, 
-#       width = 12,
-#       height = 8, 
-#       dpi = 500)
+ggsave(filename = "/Users/noahsmith/WL_RDOB/figures/percent_change_fig.png",
+       plot = percent_change_fig, 
+       width = 12,
+       height = 8, 
+       dpi = 500)
 ```
 
 We can get z-values and p-values for these point estimates and confidence intervals using z-tests. Since the SEs and point estimates are from the GLMM, we can divide the point estimates by the SE to approximate a comparison to a null distribution (i.e. no change from baseline) based on the model.
