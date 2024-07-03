@@ -92,6 +92,8 @@ null_switch_clm <- clm(switch.pref ~ 1, link = "logit",
 
 anova(switch_clm, null_switch_clm)
 ```
+Fitted model with experiment and age has significantly better fit than null (intercept-only) model.
+
 \subsubsection{Estimated marginal means plot of overall effect of treatment}
 
 Emmeans plot and table of overall coefficient values, suggesting 
@@ -393,9 +395,15 @@ percent_change_fig <- ggplot(percent_change_emm_df, aes(x = affect.type, y = emm
         strip.text = element_text(size = 18))
 
 print(percent_change_fig)
+
+# ggsave(filename = "/Users/noahsmith/WL_RDOB/figures/percent_change_fig.png",
+#       plot = percent_change_fig, 
+#       width = 12,
+#       height = 8, 
+#       dpi = 500)
 ```
 
-We can get z-values and p-values for these point estimates and confidence intervals using z-tests. Since the SEs and point estimates are from the GLMM, we can divide the point estimates by the SE to approximate a comparison to 0 (i.e. no change from baseline) based on the model.
+We can get z-values and p-values for these point estimates and confidence intervals using z-tests. Since the SEs and point estimates are from the GLMM, we can divide the point estimates by the SE to approximate a comparison to a null distribution (i.e. no change from baseline) based on the model.
 
 ```{r}
 percent_change_emm_df_pvals <- (percent_change_emm_df 
