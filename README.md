@@ -2,7 +2,7 @@
 
 R code for rank dependent optimal behaviour (switching and waiting) experiments
 
-Note: The analysis file uses cleaned RDS files for data. If the analysis file isn't running, you must first run the data cleaning file. Running the data cleaning file will generate all RDS files used in the analysis.
+Note: The analysis file uses cleaned RDS files for data. The analysis won't run until you run the data cleaning file.
 
 | File                                            | GitHub path                 |
 |---------------------------------------------|---------------------------|
