@@ -57,12 +57,13 @@ switch_barplot <- ggplot(WL_switching_df, aes(x = switch.pref,
   labs(x = "Preference for shooter game (stay) or racing game (switch)",
        y = "Count") + 
   theme(legend.position = "none",
-        axis.title.x = element_text(size = 18, 
+        axis.title.x = element_text(size = 20, 
                                     margin = margin(t = 10, r = 0, b = 0, l = 0)),
-        axis.title.y = element_text(size = 18),
+        axis.title.y = element_text(size = 20, margin = margin(t = 0, r = 10, b = 0, l = 0)),
         axis.text.x = element_text(size = 10),   
-        axis.text.y = element_text(size = 12),
-        strip.text = element_text(size = 18))
+        axis.text.y = element_text(size = 14),
+        strip.text = element_text(size = 22))
+
 
 print(switch_barplot)
 
@@ -190,12 +191,13 @@ wait_barplot <- ggplot(WL_waiting_df, aes(x = wait.pref, fill = wait.pref)) +
   labs(x = "Waiting behaviour (minutes)",
        y = "Count") + 
   theme(legend.position = "none",
-        axis.title.x = element_text(size = 18, 
+        axis.title.x = element_text(size = 20, 
                                     margin = margin(t = 10, r = 0, b = 0, l = 0)),
-        axis.title.y = element_text(size = 18),
-        axis.text.x = element_text(size = 12),   
-        axis.text.y = element_text(size = 12),
-        strip.text = element_text(size = 18))
+        axis.title.y = element_text(size = 20, margin = margin(t = 0, r = 10, b = 0, l = 0)),
+        axis.text.x = element_text(size = 14),   
+        axis.text.y = element_text(size = 14),
+        strip.text = element_text(size = 22))
+
 
 print(wait_barplot)
 
@@ -387,20 +389,19 @@ percent_change_fig <- ggplot(percent_change_emm_df, aes(x = affect.type, y = emm
   labs(x = "", y = "Percent change from baseline") + 
   scale_x_discrete(labels = affect_labels) +
   geom_hline(yintercept = 0, lty = 3) +
-  theme(axis.title.x = element_text(size = 18, 
-                                    margin = margin(t = 10, r = 0, b = 0, l = 0)),
-        axis.title.y = element_text(size = 18),
-        axis.text.x = element_text(size = 12),   
-        axis.text.y = element_text(size = 12),
-        strip.text = element_text(size = 18))
+  theme(axis.title.y = element_text(size = 20, 
+                                    margin = margin(t = 0, r = 10, b = 0, l = 0)),
+        axis.text.x = element_text(size = 16),   
+        axis.text.y = element_text(size = 14),
+        strip.text = element_text(size = 22))
 
 print(percent_change_fig)
 
-ggsave(filename = "/Users/noahsmith/WL_RDOB/figures/percent_change_fig.png",
-       plot = percent_change_fig, 
-       width = 12,
-       height = 8, 
-       dpi = 500)
+# ggsave(filename = "/Users/noahsmith/WL_RDOB/figures/percent_change_fig.png",
+#       plot = percent_change_fig, 
+#       width = 12,
+#       height = 8, 
+#       dpi = 500)
 ```
 
 We can get z-values and p-values for these point estimates and confidence intervals using z-tests. Since the SEs and point estimates are from the GLMM, we can divide the point estimates by the SE to approximate a comparison to a null distribution (i.e. no change from baseline) based on the model.
