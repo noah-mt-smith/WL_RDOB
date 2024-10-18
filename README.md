@@ -4,3 +4,5 @@ Data and analyses for Noah Smith's and Reuven Dukas's rank-dependent optimal beh
 Test push
 
 Test push from cloud
+
+Everything working  :) 
