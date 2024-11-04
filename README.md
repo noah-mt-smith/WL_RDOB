@@ -10,4 +10,4 @@ Note: The analysis R markdown file uses cleaned RDS files for data. The analysis
 | Mood raw data                                   | WL_RDOB/WL_mood_df.csv      |
 | Data cleaning                                   | WL_RDOB/data_cleaning.R     |
 | Data analyses                                   | WL_RDOB/data_analyses.Rmd   |
-| Electronic supplementary material               | WL_RDOB/supplement          |
+| Electronic supplementary material               | WL_RDOB/supplement.pdf      |
