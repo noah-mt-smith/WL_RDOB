@@ -54,7 +54,7 @@ switch_barplot <- ggplot(WL_switching_df, aes(x = switch.pref,
   geom_bar() + facet_wrap(~treatment, nrow=1, 
                           labeller = as_labeller(strip_labels)) + 
   scale_x_discrete(labels = switch_labels) +
-  scale_fill_manual(values = c("1" = "#045A8D", "2" = "#2B8CBE","3" = "grey", "4" = "#D6604D","5" = "#B2182B")) +
+  scale_fill_manual(values = c("5" = "#045A8D", "4" = "#2B8CBE","3" = "grey", "2" = "#D6604D","1" = "#B2182B")) +
   labs(x = "Preference for shooter game (stay) or racing game (switch)",
        y = "Count") + 
   theme(legend.position = "none",
@@ -69,7 +69,6 @@ print(switch_barplot)
 
 WL_switching_df$treatment <- factor(WL_switching_df$treatment, 
                                     levels = rev(levels(WL_switching_df$treatment)))
-
 ```
 
 \subsubsection{Cumulative link model of participant switching preference}
@@ -201,7 +200,7 @@ wait_barplot <- ggplot(WL_waiting_df, aes(x = wait.spell, fill = wait.spell)) +
   geom_bar() + facet_wrap(~treatment, nrow=1, 
                           labeller = as_labeller(strip_labels)) +
   scale_x_discrete(labels = wait_labels) +
-  scale_fill_manual(values = c("start" = "#045A8D", "wait" = "#B2182B")) +
+  scale_fill_manual(values = c("wait" = "#045A8D", "start" = "#B2182B")) +
   labs(x = "Waiting behaviour",
        y = "Count") + 
   theme(legend.position = "none",
@@ -217,6 +216,7 @@ print(wait_barplot)
 
 WL_waiting_df$treatment <- factor(WL_waiting_df$treatment, 
                                   levels = rev(levels(WL_waiting_df$treatment)))
+
 ```
 
 \subsubsection{binomial GLM for waiting data:}
