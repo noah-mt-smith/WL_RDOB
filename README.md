@@ -7,7 +7,7 @@ Note: The analysis R markdown file uses cleaned RDS files for data. The analysis
 | Read Me                                         | WL_RDOB/README.md           |
 | Experiment 1 (switching) raw data               | WL_RDOB/WL_switching_df.csv |
 | Experiment 2 (waiting) raw data                 | WL_RDOB/WL_waiting_df.csv   |
-| Mood (experiments 1 + 2) raw data               | WL_RDOB/WL_mood_df.csv      |
+| Mood raw data                                   | WL_RDOB/WL_mood_df.csv      |
 | Data cleaning                                   | WL_RDOB/data_cleaning.R     |
 | Data analyses                                   | WL_RDOB/data_analyses.Rmd   |
-| Electronic supplementary material (in progress) | WL_RDOB/supplement          |
+| Electronic supplementary material               | WL_RDOB/supplement          |
