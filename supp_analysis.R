@@ -58,7 +58,7 @@ WL_mood_long_df$affect.type <- factor(WL_mood_long_df$affect.type,
 
 summary(WL_mood_long_df)
 
-# Converting values pos / neg affect baseline / postgame values to percent change
+# Converting values of positive and neg affect at baseline and postgame to percent change
 # from baseline.
 
 WL_mood_percent_df <- (WL_mood_df
@@ -93,7 +93,9 @@ summary(WL_mood_percent_df1)
 
 # Goal is to make switching DF binomial so can combine with waiting DF
 
-# need to first get rid of the "3" responses in the switching data. 
+# need to first get rid of the "3" responses in the switching data, since these were 
+# "indifferent" to switching or not switching. These responses are incompatible
+# with a binomial model so just removing them.
 
 filtered_mood_percent_df1 <- WL_mood_percent_df1 %>%
   group_by(participant.ID) %>%
@@ -103,7 +105,15 @@ filtered_mood_percent_df1 <- WL_mood_percent_df1 %>%
 summary(filtered_mood_percent_df1)
 
 # now need to change any responses that appear in the switching 
-# experiment that are 1 and 2 to 0 (don't switch), and 4 and 5 to 1 (switch). 
+# experiment that are 1 (strong preference to not switch) and 2 
+# (moderate preference to not switch) in the ordinal data to 0 (don't switch)
+# in the binomial data.
+
+# Also need to change 4 (moderate preference to switch) and 5 (strong preference
+# to switch) in the ordinal data to 1 (switch) for the binomial data. 
+
+# below command ensures it's only the participants who took the switching experiment
+# (not the waiting experiment) that have their numbers changed.
 
 filtered_mood_percent_df1 <- filtered_mood_percent_df1 %>%
   mutate(pref = case_when(
